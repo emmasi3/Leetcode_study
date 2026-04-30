@@ -139,7 +139,7 @@ int main()
 
 	// test_InsertionSort
 	{
-		std::vector<int> arr{ 4, 6, 0, 1, 55, 23 };
+		std::vector<int> arr{ 4, 6, 0, 1, 55, 23, 11, 22, 7};
 		InsertionSort(arr);
 		for (auto& i : arr)
 		{
