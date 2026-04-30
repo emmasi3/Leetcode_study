@@ -13,6 +13,9 @@
       <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
       <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
     </Filter>
+    <Filter Include="图文--配合代码">
+      <UniqueIdentifier>{f3afcb1f-1bdf-4b37-8f30-0556bc1ced51}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="C--1--特殊整数.cpp">
@@ -21,5 +24,13 @@
     <ClCompile Include="b站课--1、时间复杂度和空间复杂度&amp;&amp;简单排序.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <Image Include="图片_辅助理解算法\b站课--1(1).jpg">
+      <Filter>图文--配合代码</Filter>
+    </Image>
+    <Image Include="图片_辅助理解算法\b站课--1(2).jpg">
+      <Filter>图文--配合代码</Filter>
+    </Image>
   </ItemGroup>
 </Project>
