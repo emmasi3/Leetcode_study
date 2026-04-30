@@ -8,6 +8,7 @@
 * 
 * 3、异或运算的面试题，60min，可参考 b站课--1 两种图片，辅助理解，但是 (2) 图中的代码是有问题的，看这里的就行
 * 
+* 4、插入排序 -- 1:15:00
 */
 
 
@@ -76,7 +77,33 @@ static void printOddTimersNum2(std::vector<int>& arr)
 	}
 
 	// 得到另一个
-	std::cout << OnlyOne << " " << (err ^= OnlyOne) << std::endl;
+	std::cout << OnlyOne << " " << (err ^ OnlyOne) << std::endl;
+}
+
+/*
+* @brief 插入排序算法实现
+*/
+static void InsertionSort(std::vector<int>& arr)
+{
+	if (arr.empty() || arr.size() < 2) return;
+
+	for (int i = 0; i < arr.size(); ++i)
+	{
+		for (int j = i; j > 0; --j)
+		{
+			// 这里可以提前退出，因为跟着 i 位置最近的一个数值，一定是前面最大的，既然已经比最大的还要大或者相等，就不用再次
+			// 比较后续的了，无意义
+			if (arr[j] >= arr[j - 1])
+				break;
+
+			// 看是否比前一位小
+			if (arr[j] < arr[j - 1])
+			{
+				// 交换指定位置
+				swap_(arr, j, j - 1);
+			}
+		}
+	}
 
 }
 
@@ -108,6 +135,17 @@ int main()
 	{
 		std::vector<int> arr{ 5, 8, 8, 8, 6, 6, 7, 7, 4, 4, 4, 4 };
 		printOddTimersNum2(arr);
+	}
+
+	// test_InsertionSort
+	{
+		std::vector<int> arr{ 4, 6, 0, 1, 55, 23 };
+		InsertionSort(arr);
+		for (auto& i : arr)
+		{
+			std::cout << i << " ";
+		}
+		std::cout << std::endl;
 	}
 
 	return 0;
