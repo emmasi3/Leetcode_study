@@ -8,7 +8,12 @@
 * 
 * 3、异或运算的面试题，60min，可参考 b站课--1 两种图片，辅助理解，但是 (2) 图中的代码是有问题的，看这里的就行
 * 
-* 4、插入排序 -- 1:15:00
+* 4、插入排序 -- 1:15:00，虽然理论的时间复杂度是一样的，但是实际测试肯定是 “插入排序” 更优一点，因为：
+*	冒泡排序强制执行完规定的次数，但是插入排序会在合适的地方退出循环，只有最坏的情况才会执行完规定的次数
+* 
+* 5、二分查找
+*	(1) 在一个有序(递增)的数组中，找一个数字
+*	(2) 在一个有序(递增)的数组中，找 >=num 的最左侧的值。(解释: 0111222445667，找2，则下标最终为 4，这就是最左侧的值)
 */
 
 
@@ -107,6 +112,43 @@ static void InsertionSort(std::vector<int>& arr)
 
 }
 
+/*
+* @brief 二分查找 -- (1)
+*/
+static bool binaryFindNum(std::vector<int>& arr, int num)
+{
+	if (arr.empty()) return false;
+
+	// 左区间索引
+	int left = 0;
+	// 右区间索引
+	int right = arr.size() - 1;
+
+	// i 从中间位置开始，退出条件 left 与 right 相邻时，更新语句：i 始终位于 left、right 中间
+	for (int i = (left + right) / 2; left + 1 != right; i = (left + right) / 2)
+	{
+		// 如果找到，直接退出
+		if (arr[i] == num)
+		{
+			std::cout << i << std::endl;
+			return true;
+		}
+		// 当前位置位于 num 右边，则将 i 置为右区间索引
+		else if (arr[i] > num)
+		{
+			right = i;
+		}
+		// 当前位置位于 num 左边，则将 i 置为做区间索引
+		else
+		{
+			left = i;
+		}
+	}
+
+	std::cout << "not find " << num << " in this arr!";
+	return false;
+}
+
 int main()
 {
 	// test_swap_()
@@ -146,6 +188,12 @@ int main()
 			std::cout << i << " ";
 		}
 		std::cout << std::endl;
+	}
+
+	// test_binaryFindNum
+	{
+		std::vector<int> arr{ 4,6,10,22,44,44,44,52};
+		bool ret = binaryFindNum(arr, 7);
 	}
 
 	return 0;
