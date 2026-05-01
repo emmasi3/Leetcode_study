@@ -14,6 +14,8 @@
 * 5、二分查找
 *	(1) 在一个有序(递增)的数组中，找一个数字
 *	(2) 在一个有序(递增)的数组中，找 >=num 的最左侧的值。(解释: 0111222445667，找2，则下标最终为 4，这就是最左侧的值)
+*	(3) 在一个 “无序” 、“相邻两数一定不相等”、的数组中，找一个局部最小的值，对，一个就行，可以对照 -- b站课--1(3)图片理解
+*	
 */
 
 
@@ -149,6 +151,53 @@ static bool binaryFindNum(std::vector<int>& arr, int num)
 	return false;
 }
 
+/*
+* @brief 二分查找 -- (2)
+*/
+static bool binaryFindNum_left(std::vector<int>& arr, int num)
+{
+	if (arr.empty()) return false;
+
+	// 左区间索引
+	int left = 0;
+	// 右区间索引
+	int right = arr.size() - 1;
+
+	// i 从中间位置开始，退出条件 left 与 right 相邻时，更新语句：i 始终位于 left、right 中间
+	for (int i = (left + right) / 2; left + 1 != right; i = (left + right) / 2)
+	{
+		// 如果找到，这里再做判断，直到找到最左边的符合要求的索引为止
+		if (arr[i] == num)
+		{
+			for (int j = i; j > 0; --j)
+			{
+				if (arr[j - 1] == arr[j])
+				{
+					// 记录最左边的目标值的索引
+					i = j - 1;
+					continue;
+				}
+			}
+
+			std::cout << i << std::endl;
+			return true;
+		}
+		// 当前位置位于 num 右边，则将 i 置为右区间索引
+		else if (arr[i] > num)
+		{
+			right = i;
+		}
+		// 当前位置位于 num 左边，则将 i 置为做区间索引
+		else
+		{
+			left = i;
+		}
+	}
+
+	std::cout << "not find " << num << " in this arr!";
+	return false;
+}
+
 int main()
 {
 	// test_swap_()
@@ -192,8 +241,14 @@ int main()
 
 	// test_binaryFindNum
 	{
-		std::vector<int> arr{ 4,6,10,22,44,44,44,52};
-		bool ret = binaryFindNum(arr, 7);
+		std::vector<int> arr{ 4,6,10,22,44,44,44,52 };
+		bool ret = binaryFindNum(arr, 44);
+	}
+
+	// test_binaryFindNum_left
+	{
+		std::vector<int> arr{ 4,6,10,22,44,44,44,52 };
+		bool ret = binaryFindNum_left(arr, 44);
 	}
 
 	return 0;
