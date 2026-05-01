@@ -127,7 +127,10 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="b站课--1、时间复杂度和空间复杂度&amp;&amp;简单排序.cpp" />
+    <ClCompile Include="b站课--1、时间复杂度和空间复杂度&amp;&amp;简单排序.cpp">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
+    </ClCompile>
+    <ClCompile Include="b站课--2、认识O(logN)排序(涉及递归).cpp" />
     <ClCompile Include="C--1--特殊整数.cpp">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
     </ClCompile>

@@ -24,6 +24,9 @@
     <ClCompile Include="b站课--1、时间复杂度和空间复杂度&amp;&amp;简单排序.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
+    <ClCompile Include="b站课--2、认识O(logN)排序(涉及递归).cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <Image Include="图片_辅助理解算法\b站课--1(1).jpg">
