@@ -11,7 +11,24 @@
 *    {3,4,1,5,6}; 以3为例，有 (3,1) 一对，然后遍历就好，这样效率不行
 *	 修改小和问题的解决方法即可，只是统计数量而已
 * 
+* 4、荷兰国旗问题
+*	（1）要求：时间复杂度 O(N)，空间复杂度 O(1)
+*	（2）要求同 (1)
+* 
 */
+
+static void swap_(std::vector<int>& arr, int i, int j)
+{
+	// 本来就相等，不用交换，就算需要交换(有时候是键值对)，也不能使用异或运算交换，会归零！
+	if (arr[i] == arr[j])
+	{
+		return;
+	}
+
+	arr[i] = arr[i] ^ arr[j];
+	arr[j] = arr[i] ^ arr[j];
+	arr[i] = arr[i] ^ arr[j];
+}
 
 /*
 * @brief 递归排序 -- 一个无序的数组，找到 “指定区间” 的最大值
@@ -175,6 +192,28 @@ static int Small_num(std::vector<int>& arr)
 	return Small_process(arr, 0, arr.size() - 1);
 }
 
+/*
+* @brief 荷兰国旗问题（1） -- 快速排序
+* @param int num 指定的数字
+*/
+static void Quick_Sort(std::vector<int>& arr, int num)
+{
+	if (arr.empty() || arr.size() < 2)
+		return;
+	// 左区间索引，从 -1 开始，也就是 <= num 的区间
+	int left = -1;
+
+	for (int i = 0; i < arr.size(); ++i)
+	{
+		// 找到之后直接调换位置，++left推进左区间
+		if (arr[i] <= num)
+		{
+			swap_(arr, i, left + 1);
+			++left;
+		}
+	}
+}
+
 int main()
 {
 	// test_process
@@ -198,7 +237,19 @@ int main()
 	// test_Small_num
 	{
 		std::vector<int> arr{ 1,3,4,2,5,7 };
-		std::cout << "小和：" << Small_num(arr);
+		std::cout << "小和：" << Small_num(arr) << std::endl;
+	}
+
+	// test_Quick_Sort
+	{
+		std::vector<int> arr{ 4,8,4,5,9,10,7,6,4,12 };
+		int num = 9;
+		Quick_Sort(arr, num);
+		for (int& i : arr)
+		{
+			std::cout << i << " ";
+		}
+		std::cout << std::endl;
 	}
 
 	return 0;
