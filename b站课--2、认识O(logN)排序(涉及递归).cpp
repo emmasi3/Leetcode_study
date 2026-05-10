@@ -6,6 +6,11 @@
 * 
 * 2、归并排序(利用递归) -- 38min，这玩意就是要看图，不看图，我反正有点想不通递归的操作
 * 
+* 3、小和问题(利用归并思想) -- 1:05:02，
+*	 逆序对问题，统计一个数组中有多少个逆序对，逆序对: 一个元素的右边若有比它小的数，则为一个逆序对
+*    {3,4,1,5,6}; 以3为例，有 (3,1) 一对，然后遍历就好，这样效率不行
+*	 修改小和问题的解决方法即可，只是统计数量而已
+* 
 */
 
 /*
@@ -96,6 +101,80 @@ static void process2(std::vector<int>& arr, int L, int R)
 	merge(arr, L, mid, R);
 }
 
+/*
+* @brief 小和问题归并排序方法
+*/
+static int Small_merge(std::vector<int>& arr, int L, int mid, int R)
+{
+	std::vector<int> help;	// 辅助容器
+	int left = L;			// 左区间索引
+	int right = mid + 1;	// 右区间索引
+	int ret = 0;			// 小和
+
+	while (left <= mid && right <= R)
+	{
+		// 左区间 < 右区间 指定元素，拷贝left并给到help
+		if (arr[left] < arr[right])
+		{
+			ret += ((R - right + 1) * arr[left]);
+			help.push_back(arr[left]);
+			++left;
+		}
+		// 左区间 >= 右区间 指定元素，优先拷贝右区间(这样右指针就不用回退)
+		else
+		{
+			help.push_back(arr[right]);
+			++right;
+		}
+	}
+
+	// 塞剩余的数据，到这里不用
+	while (left <= mid)
+	{
+		help.push_back(arr[left++]);
+	}
+
+	while (right <= R)
+	{
+		help.push_back(arr[right++]);
+	}
+
+	// 将 help 同步到 arr
+	for (int& i : help)
+	{
+		arr[L++] = i;
+	}
+
+	return ret;
+}
+
+static int Small_process(std::vector<int>& arr, int L, int R)
+{
+	if (L == R)
+	{
+		// 仅剩一个元素时，直接返回 0，因为小和问题中，1个元素没法比较，那么 “小和” 也就是0
+		return 0;
+	}
+
+	// 计算中点
+	int mid = L + ((R - L) >> 1);
+
+	return Small_process(arr, L, mid) + Small_process(arr, mid + 1, R) + Small_merge(arr, L, mid, R);
+}
+
+/*
+* @brief 小和问题
+*/
+static int Small_num(std::vector<int>& arr)
+{
+	if (arr.empty() || arr.size() < 2)
+	{
+		return 0;
+	}
+
+	return Small_process(arr, 0, arr.size() - 1);
+}
+
 int main()
 {
 	// test_process
@@ -114,6 +193,12 @@ int main()
 			std::cout << i << " ";
 		}
 		std::cout << std::endl;
+	}
+
+	// test_Small_num
+	{
+		std::vector<int> arr{ 1,3,4,2,5,7 };
+		std::cout << "小和：" << Small_num(arr);
 	}
 
 	return 0;
