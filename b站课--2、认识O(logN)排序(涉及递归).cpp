@@ -11,15 +11,20 @@
 *    {3,4,1,5,6}; 以3为例，有 (3,1) 一对，然后遍历就好，这样效率不行
 *	 修改小和问题的解决方法即可，只是统计数量而已
 * 
-* 4、荷兰国旗问题
+* 4、荷兰国旗问题 -- 1:40:00 左右或者以前
 *	（1）要求：时间复杂度 O(N)，空间复杂度 O(1)
-*	（2）要求同 (1)
+*	（2）要求同 (1), 分3个区间
 * 
+* 5、快速排序 -- 2:06:00
+*	（1）1.0 --               -- O(N2)
+*	（2）2.0 -- 基于荷兰问题	  -- O(N2)
+*	（3）3.0 -- 时间复杂度最优 -- O(N * logN)
 */
 
 static void swap_(std::vector<int>& arr, int i, int j)
 {
-	// 本来就相等，不用交换，就算需要交换(有时候是键值对)，也不能使用异或运算交换，会归零！
+	// 本来就相等，不用交换，但是我担心的不是这个，而是 i == j 时，回归零，因为你后续修改的是同一块内存，第一步就直接归零了，后续步骤没意义
+	// 但是同一块内存上的值也必定相等，所以在 arr[i] == arr[j] 时，直接返回，两种情况都避免了，当然，第一种情况，不会引发风险，只是没必要交换
 	if (arr[i] == arr[j])
 	{
 		return;
@@ -193,13 +198,14 @@ static int Small_num(std::vector<int>& arr)
 }
 
 /*
-* @brief 荷兰国旗问题（1） -- 快速排序
+* @brief 荷兰国旗问题（1） -- 划分算法 {<= num, > num}
 * @param int num 指定的数字
+* @return left 返回 <= 区间最后一个元素索引
 */
-static void Quick_Sort(std::vector<int>& arr, int num)
+static int partition_0(std::vector<int>& arr, int num)
 {
 	if (arr.empty() || arr.size() < 2)
-		return;
+		return 0;
 	// 左区间索引，从 -1 开始，也就是 <= num 的区间
 	int left = -1;
 
@@ -212,7 +218,92 @@ static void Quick_Sort(std::vector<int>& arr, int num)
 			++left;
 		}
 	}
+
+	return left;
 }
+
+/*
+* @brief 荷兰国旗问题（2） -- 划分算法 {< num, == num, > num}
+* @param int num 指定的数字
+*/
+static void partition(std::vector<int>& arr, int num)
+{
+	if (arr.empty() || arr.size() < 2)
+		return;
+
+	int left = -1;				// < 区间索引
+	int right = arr.size();		// > 区间索引
+
+	// 退出条件，直到 i 与 right > 区间相遇
+	for (int i = 0; i < right; ++i)
+	{
+		// < num，交换位置(< 区间下一个)，并扩展 < 区间
+		if (arr[i] < num)
+		{
+			swap_(arr, i, (left++) + 1);
+			continue;
+		}
+		// == num，不做修改，查看下一个元素
+		else if (arr[i] == num)
+		{
+			continue;
+		}
+		// > num，交换位置(> 区间下一个)，并扩展 > 区间，并查看交换过来的元素(即 --i)
+		else
+		{
+			swap_(arr, i, (right--) - 1);
+			--i;
+			continue;
+		}
+	}
+
+}
+
+/*
+* @brief 划分指定数组指定区间的元素 <=, >
+* @param left 左边界
+* @param num 右边界
+*/
+static int Q_S_partition(std::vector<int>& arr, int L, int num)
+{
+	if (arr.empty() || arr.size() < 2)
+		return 0;
+	// 左区间索引，从 L - 1 开始，重新计算 <= arr[num] 的区间末尾索引
+	int left = L - 1;
+
+	for (int i = L; i < num; ++i)
+	{
+		// 找到之后直接调换位置，++left推进左区间
+		if (arr[i] <= arr[num])
+		{
+			swap_(arr, i, left + 1);
+			++left;
+		}
+	}
+
+	return left;
+}
+
+/*
+* @brief 快速排序 -- 1
+*/
+static void Quick_Sort_1(std::vector<int>& arr, int L, int R)
+{
+	if (L < R)
+	{
+		// 获取 <= 区间最后一个元素的索引
+		int left = Q_S_partition(arr, L, R);
+		// 交换最后一个与 > 区间第一个（因为交换完之后，换回来的还是一个 > R 的数字）
+		swap_(arr, R, left + 1);
+		// 继续对 <= 和 > 区间分别划分
+		Quick_Sort_1(arr, L, left);
+		Quick_Sort_1(arr, left + 1, R);
+	}
+
+	// 直到 L == R，什么都不做，因为只有一个元素，递归退出条件
+}
+
+
 
 int main()
 {
@@ -240,11 +331,35 @@ int main()
 		std::cout << "小和：" << Small_num(arr) << std::endl;
 	}
 
-	// test_Quick_Sort
+	// test_partition_0
 	{
 		std::vector<int> arr{ 4,8,4,5,9,10,7,6,4,12 };
 		int num = 9;
-		Quick_Sort(arr, num);
+		partition_0(arr, num);
+		for (int& i : arr)
+		{
+			std::cout << i << " ";
+		}
+		std::cout << std::endl;
+	}
+
+	// test_partition
+	{
+		//std::vector<int> arr{ 4, 9, 4, 3, 7, 4, 8, 4, 1, 6, 4, 2, 9, 4 };
+		std::vector<int> arr{ 4, 9, 4, 3, 7, 4, 8, 4, 1, 6, 4, 2, 9, 4 };
+		int num = 4;
+		partition(arr, num);
+		for (int& i : arr)
+		{
+			std::cout << i << " ";
+		}
+		std::cout << std::endl;
+	}
+
+	// test_Quick_Sort_1
+	{
+		std::vector<int> arr{ 4, 7, 1, 8, 9, 2, 4 ,5, 6,6, 47, 25 };
+		Quick_Sort_1(arr, 0, arr.size() - 1);
 		for (int& i : arr)
 		{
 			std::cout << i << " ";
